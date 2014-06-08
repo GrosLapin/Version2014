@@ -5,28 +5,38 @@
 
 #include "terrain.hpp"
 #include "case.hpp"
-//#include "../../tools/utilitaire.hpp"
+#include "../../tools/utilitaire.hpp"
 
 using namespace std;
 
-bool Terrain::addCase(int i, int j)
+
+
+Case* Terrain::getCase(int i, int j)
 {
-    // la fleme de l'ecrir deux fois
-    std::ostringstream oss;
-    oss <<  i <<  "_"  << j;
-    std::string ij = oss.str();
-    oss.str("");
-
-    // si la case n'esite pas deja
-    if (mapCase.find(ij) == mapCase.end() )
+    std::string ij = concatenate(i,"_",j);
+    if (contains(mapCase,ij))
     {
-        //std::cout << ij  << std::endl;
-        // ajout de la case dans la liste
-        listCase.push_back(make_shared<Case>(i,j));
+        return mapCase[ij];
+    }
+    // rien a a supprimer si ça existe pas
+    return nullptr;
 
-        // ajoute de la case dans la map
-        std::weak_ptr<Case> nouvelleCase_weak = listCase.back();
-        mapCase[ij] = nouvelleCase_weak;
+}
+
+void Terrain::placeCase(Case& uneCase)
+{
+    // J'ai eu un comportement etrange une fois ici : DANGER
+    int i = uneCase.getI();
+    int j = uneCase.getJ();
+    std::string ij = uneCase.toString();
+
+    // si la case n'esite pas deja : normalement ça devrait pas se produire
+    std::cout << mapCase.size() <<" " ;
+    if (!contains(mapCase,ij))
+    {
+
+        mapCase[ij] = &uneCase;
+
         int copieI = i, copieJ = j;
         // on fait le liens avec les cases existantes
         for (int k = DebutDirection ; k <= FinDirection ; k++)
@@ -37,85 +47,21 @@ bool Terrain::addCase(int i, int j)
             IJvoisin((Direction)k,i,j);
 
             // si cette case existe
-            oss << i <<  "_"  << j;
-            std::string ij_voisin = oss.str();
-
-            oss.str("");
-
-            if ( mapCase.find(ij_voisin) != mapCase.end())
+            std::string ij_voisin = concatenate(i,"_",j);
+            if (contains(mapCase,ij_voisin))
             {
-                std::weak_ptr<Case> voisin_weak = mapCase[ij_voisin];
-                if ( auto voisin = voisin_weak.lock() )
+                Case* voisin_ptr = mapCase[ij_voisin];
+                if ( voisin_ptr != nullptr )
                 {
                     // On ajoute cette case comme voisin ( et vis versa )
-                    if ( auto nouvelleCase = nouvelleCase_weak.lock() )
-                        nouvelleCase->addVoisin((Direction)k,voisin_weak);
-                    else
-                        std::cerr << " miracle, bug imposible " ;
-
-
+                    uneCase.addVoisin((Direction)k,voisin_ptr);
                 }
-
             }
-
-
         }
-
-        return true;
-    }
-
-    // existe deja
-/*
-    auto weak = mapCase[ij];
-    if ( auto sh = weak.lock() )
-    {
-        cout <<  (*sh).getI() << " " <<  (*sh).getJ() ;
     }
     else
-        cout << "fail lock";
-    cout << ij << "  false \n";*/
-    return false;
-}
-
-
-bool Terrain::removeCase (int i, int j)
-{
-    std::ostringstream oss;
-    oss << i <<  "_"  << j;
-    std::string ij = oss.str();
-
-    // si la case esite
-    if (mapCase.find(ij) != mapCase.end() )
     {
-        // recherhce de l'id de la case
-        auto it = std::find(listCase.begin(),listCase.end(),mapCase[ij].lock());
-
-
-        listCase.erase(it);
-        mapCase.erase(mapCase.find(ij));
-
-        return true;
+        std::cerr << "DANGER "<< mapCase[ij]->getI() << " " <<  mapCase[ij]->getJ()  << std::endl;
     }
-
-    // rien a a supprimer si ça existe pas
-    return false;
-
-}
-
-std::weak_ptr<Case> Terrain::getCase(int i, int j)
-{
-    std::ostringstream oss;
-    oss << i <<  "_"  << j;
-    std::string ij = oss.str();
-
-
-    if (mapCase.find(ij) != mapCase.end() )
-    {
-
-        return mapCase[ij];
-    }
-
-    // rien a a supprimer si ça existe pas
-    return std::weak_ptr<Case>();
-
+    // la case existait déjà, on a rien fait
 }

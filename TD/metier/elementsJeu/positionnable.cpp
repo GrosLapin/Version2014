@@ -1,35 +1,44 @@
 #include "positionnable.hpp"
 #include "../terrain/case.hpp"
 #include <iostream>
-Positionnable::Positionnable (std::weak_ptr<Case> p_position)
+using namespace std;
+Positionnable::Positionnable (Case* p_position) : position(p_position)
 {
-    position = p_position;
-    if ( auto shared = position.lock() )
+    cout << "construt" <<endl;
+    if ( nullptr != position )
     {
-        Case& uneCase = (*shared.get());
-        std::cout <<"ici";
-        std::weak_ptr<Positionnable> wk = shared_from_this();
-         std::cout <<"ici";
-
-                 uneCase.addPositionnable( wk);
+        //position->addPositionnable(this);
     }
 }
 
-void Positionnable::changeCase (std::weak_ptr<Case> nouvelleCase)
+/// _______________________________________________
+/// _____j'ai declarer un destructor du____________
+/// _________coup je devrais pas pouvoir___________
+/// ____________faire de copie_____________________
+/// _______________________________________________
+Positionnable::~Positionnable ()
+{
+    if ( nullptr != position )
+    {
+        //position->removePositionnable(this);
+    }
+}
+
+void Positionnable::changeCase (Case* nouvelleCase)
 {
     position = nouvelleCase;
 }
 
 
- size_t HashWeakPositionnable::operator()(const std::weak_ptr<Positionnable> &weak_posi) const {
+ size_t HashWeakPositionnable::operator()(const Positionnable* positionnalbe_ptr) const {
     size_t retour = 0 ;
-    if ( auto sharedPosi = weak_posi.lock())
-    {
-        if ( auto sharedCase = sharedPosi.get()->getPosition().lock() )
-        {
-            retour = sharedCase.get()->getI()* 100 + sharedCase.get()->getI();
-        }
-    }
 
-     return retour;
-   }
+    Case* saCase_ptr = positionnalbe_ptr->getPosition();
+
+    if ( nullptr != positionnalbe_ptr && nullptr !=  saCase_ptr )
+    {
+        retour = saCase_ptr->getI()* 100 + saCase_ptr->getI();
+
+    }
+    return retour;
+}

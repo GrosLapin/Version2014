@@ -1,5 +1,6 @@
 #ifndef UTILITAIRE_HPP
 #define UTILITAIRE_HPP
+
 #include <string>
 #include <sstream>
 #include <SFML/Graphics.hpp>
@@ -12,13 +13,14 @@
 #include <boost/geometry/geometries/register/point.hpp>
 #include <boost/geometry/geometries/register/ring.hpp>
 
-#include "../metier/terrain/terrain.hpp"
-#include "../metier/terrain/case.hpp"
 
-std::string getDossier(std::string cheminExe)
+
+
+
+template <class Map, class Key>
+bool contains (Map uneMap, Key uneKey)
 {
-    int possition = cheminExe.find_last_of("/\\");
-    return  cheminExe.substr(0,possition) +"/";
+    return ( uneMap.find(uneKey) != uneMap.end());
 }
 
 namespace patch
@@ -30,6 +32,31 @@ namespace patch
         return stm.str() ;
     }
 }
+
+
+
+/// pourquoi faire simple quand on peut faire du c++
+template <typename T>
+void sous_concanate(std::ostringstream& stm,const T& valeur)
+{
+    stm << valeur;
+}
+
+template <typename U, typename... T>
+void sous_concanate(std::ostringstream& stm,const U& head,const T&... tail)
+{
+    stm << head;
+    sous_concanate(stm,tail...);
+}
+
+template <class... Types>
+std::string concatenate(const Types&... values)
+{
+    std::ostringstream stm ;
+    sous_concanate(stm, values... );
+    return stm.str();
+}
+
 
 template <class T>
 bool operator== (std::shared_ptr<T> shp, T t)
@@ -83,18 +110,10 @@ std::vector<sf::Vector2f> getAllPoints <sf::RectangleShape> (const sf::Rectangle
 
     return retour;
 }*/
-template <>
-std::vector<sf::Vector2f> getAllPoints <sf::RenderWindow>(const sf::RenderWindow& cs)
-{
-    std::vector<sf::Vector2f> retour;
 
-    retour.emplace_back(0,0);
-    retour.emplace_back(0,cs.getSize().y);
-    retour.emplace_back(cs.getSize().x,cs.getSize().y);
-    retour.emplace_back(cs.getSize().x,0);
-
-    return retour;
-}
+// au lieux de spécifier, je surcharge semberait que si non ça fasse un bug relou a la compil... si le fait une spécifiation
+// et donc que je laisse le corps ici , j'ai une multiple def a la con
+std::vector<sf::Vector2f> getAllPoints (const sf::RenderWindow& cs);
 
 template <class T>
 std::vector<sf::Vector2f>    getAllPoints (const sf::Rect< T >& rect)
@@ -118,49 +137,9 @@ std::vector<sf::Vector2f> getRing(const T& qqch)
     return retour;
 }
 
-bool loadMap(Terrain &terrain, std::string p_fichier)
-{
-
-    std::ifstream fichier(p_fichier.c_str(), std::ios::in);  // on ouvre en lecture
-    if(fichier)  // si l'ouverture a fonctionné
-    {
-        std::string line;  // déclaration d'une chaîne qui contiendra la ligne lue
-        while(getline(fichier, line))  // tant que l'on peut mettre la ligne dans "contenu"
-        {
-            std::istringstream iss;
-            iss.str(line);
-            std::string i, j;
-            iss >> i >> j ;
-
-            terrain.addCase(std::atoi(i.c_str()), std::atoi(j.c_str()));
-        }
-        fichier.close();
-    }
-
-    return false;
-
-}
-
-bool saveMap(Terrain &terrain, std::string p_fichier)
-{
-
-    std::ofstream fichier(p_fichier.c_str(),  std::ios::out |  std::ios::trunc );  //déclaration du flux et ouverture du fichier
-    if(fichier)  // si l'ouverture a réussi
-    {
-
-        for ( auto& shared : terrain  )
-        {
-            fichier << shared.get()->getI() << " " << shared.get()->getJ() <<std::endl;
-
-        }
-
-        fichier.close();  // on referme le fichier
-        return true;
-    }
-
-    return false;
-
-}
-
+class Terrain;
+Terrain loadMap(std::string p_fichier);
+bool saveMap(Terrain &terrain, std::string p_fichier);
+std::string getDossier(std::string cheminExe);
 
 #endif // UTILITAIRE_HPP

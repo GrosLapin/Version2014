@@ -19,8 +19,9 @@
 #include "../elementsJeu/positionnable.hpp"
 #include "../../tools/structAndOperator.hpp"
 // il va faloir gerer les voisin comme des weak-ptr
-class Case : public std::enable_shared_from_this<Case>
+class Case
 {
+
     public :
         Case(int p_i, int p_j);
         Case();
@@ -32,23 +33,30 @@ class Case : public std::enable_shared_from_this<Case>
 
         std::string toString() const;
 
+        // l'égalité se base sur l'égalité des indices
         bool operator==(const Case& other) const
         {
             return ( i == other.i ) && (j == other.j ) ;
         }
 
         // pour la navigation dans la map
-        bool quelleDirection(const Case& p_voisin,Direction &out_dir) ;
-        std::weak_ptr<Case> getVoisin(const Direction& direction);
+        bool quelleDirection(const Case* p_voisin,Direction &out_dir) ;
+        Case* getVoisin(const Direction& direction);
 
-        // pour l'editeur de map
-        void addVoisin(const Direction& direction,std::weak_ptr<Case>  p_voisin);
+        // pour l'editeur de map et le constructeur de terrain
+        void addVoisin(const Direction& direction,Case*  p_voisin);
+        void removeVoisin(const Direction& direction);
 
 
-        void addPositionnable (std::weak_ptr<Positionnable> &wkp_pos)
+        void addPositionnable (Positionnable* pos_ptr)
         {
-             std::cout << "la \n";
-            setPositionable.insert(wkp_pos);
+            std::cout << "instert pos_ptr (" << setPositionable.size() << ")" <<std::endl;
+            setPositionable.insert(pos_ptr);
+            std::cout << "Done" << std::endl;
+        }
+        void removePositionnable (Positionnable* pos_ptr)
+        {
+            setPositionable.erase(setPositionable.find(pos_ptr));
         }
 
 
@@ -60,12 +68,16 @@ class Case : public std::enable_shared_from_this<Case>
     private :
         // la definition meme d'un case
         int i,j;
-        //std::map<Direction,std::reference_wrapper<Case>> voisin; //Case* voisin[6]; std::reference_wrapper<Case>
-        std::array<std::weak_ptr<Case>,6> voisin;
-        std::unordered_set<std::weak_ptr<Positionnable>, HashWeakPositionnable> setPositionable;
+
+        // on peut pas stocke des pointeurs, ni des indice car les pointeurs volent en cas d'ajout et
+        // les indices sont invalidés en cas de suppression
+        // on doit stocker les coordonnées des voisins et passer par la map : du coup l'interet du tableau
+        // est fortement limité
+        /// EDIT : now il y a pas de modif de terrain in game so, ok :)
+        std::array<Case*,6> voisin;
         bool franchissable;
         bool occupe;
-
+        std::unordered_set<Positionnable*, HashWeakPositionnable> setPositionable;
 
 
         /*

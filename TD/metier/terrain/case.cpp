@@ -5,17 +5,22 @@ using namespace std;
 Case::Case(int p_i, int p_j) :
     i ( p_i ),
     j ( p_j ),
+    voisin ({{nullptr,nullptr,nullptr,nullptr,nullptr,nullptr}}),
     franchissable (true),
-    occupe (false)
-{}
+    occupe (false),
+    setPositionable ()
+{
+    // pour la double ({{ }}) => bug Gcc qui respecte pas le stendard
+    // http://stackoverflow.com/questions/8192185/using-stdarray-with-initialization-lists
+}
 
 // semblerais que si on le fasse pas il puisse y avoir un bug (pas d'initialisaiton des types de base)
-Case::Case() :
+/*Case::Case() :
     i ( 0 ),
     j ( 0 ),
     franchissable (true),
     occupe (false)
-{}
+{}*/
 
 std::string Case::toString() const
 {
@@ -24,16 +29,18 @@ std::string Case::toString() const
     return oss.str();
 }
 
-bool Case::quelleDirection(const Case& p_voisin,Direction &out_dir)
+bool Case::quelleDirection(const Case* p_voisin,Direction &out_dir)
 {
     /// je pense que la fonction peut s'optimiser avec un calcul au lieu de faire un parcours de boucle.
     bool pasTrouve = true;
     int dir = DebutDirection;
     while (pasTrouve && dir <=FinDirection )
     {
-        if ( auto candidat = voisin[(Direction)dir].lock() )
+        Case* unVoisin = voisin[(Direction)dir];
+        if ( unVoisin != nullptr )
         {
-            if ( (*candidat) == p_voisin)
+            // operator == sur i j
+            if ( unVoisin == p_voisin)
             {
                 pasTrouve= false;
             }
@@ -53,52 +60,28 @@ bool Case::quelleDirection(const Case& p_voisin,Direction &out_dir)
 
 Case::~Case()
 {
-    /*
     for (int k = DebutDirection ; k <= FinDirection ; k++)
     {
-        if (voisin[k] != NULL)
+        if (voisin[k] != nullptr)
         {
-
-           voisin[k]->voisin = NULL;
+           voisin[k]->voisin[directionOppose((Direction)k)] = nullptr;
         }
-    }*/
+    }
 }
 
-std::weak_ptr<Case> Case::getVoisin(const Direction& direction)
+Case* Case::getVoisin(const Direction& direction)
 {
     return voisin[direction];
 }
 
-void Case::addVoisin(const Direction& direction, std::weak_ptr<Case>  p_voisin)
+void Case::addVoisin(const Direction& direction, Case*  p_voisin)
 {
     // on ne peut ajouter un voisin que la case est "libre"
-    auto cetteCase = voisin[direction].lock() ;
-    auto voisin_shared = p_voisin.lock() ;
-    if ( ! cetteCase)
+    if ( voisin[direction]==nullptr && p_voisin != nullptr)
     {
         voisin[direction] = p_voisin;
-        if (voisin_shared )
-            voisin_shared->addVoisin(directionOppose(direction),shared_from_this());
-        else
-            std::cout << "ceci ne devrait pas arriver "<< endl;
-    }
-   /* auto retour = voisin.insert(pair<Direction,reference_wrapper<Case>> (direction,reference_wrapper<Case>(p_voisin)));
-    if ( retour.second )
-    {
-        p_voisin.addVoisin(directionOppose(direction), (*this) );
-    }*/
-    /*
-    // on ne peut ajouter un voisin que la case est "libre"
-    if ( voisin[direction] == NULL)
-    {
-        // on ajoute le voisin
-        voisin[direction] = p_voisin;
-        // et on dit au voisin de nous ajouter
         p_voisin->addVoisin(directionOppose(direction),this);
-        // on evite la boucle infine avec le if == NULL
-
-        //std::cout << "(" << i << "," << j << ") a pour voisin ("<<p_voisin->i<< "," << p_voisin->j << ")" << std::endl;
-    }*/
+    }
 }
 
 

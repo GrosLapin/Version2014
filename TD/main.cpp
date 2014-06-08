@@ -8,12 +8,11 @@
 
 #include "graphic/fonctionGraphique.hpp"
 #include "graphic/deplacementCamera.hpp"
-#include "tools/utilitaire.hpp"
 #include "graphic/multyPartViewWindow.hpp"
 #include "metier/terrain/terrain.hpp"
 #include "metier/terrain/case.hpp"
 #include "metier/elementsJeu/positionnable.hpp"
-
+#include "tools/utilitaire.hpp"
 using namespace std;
 
 #include <boost/geometry.hpp>
@@ -55,8 +54,7 @@ int main( int argc, char *argv[])
     sf::ConvexShape polygon = createHexagone (window.getCote(), sf::Color(255, 255, 255,245));
     sf::ConvexShape polygonBleu = createHexagone (window.getCote(), sf::Color(0, 0, 255,80));
 
-    Terrain terrain;
-    loadMap(terrain,fichier);
+    Terrain terrain = loadMap(fichier);
 
     // on gere les touches en gerant le zoom
     DeplacementCamera gestionTouches(1,1);
@@ -147,6 +145,7 @@ int main( int argc, char *argv[])
             // Close window : exit
             if (event.type == sf::Event::Closed)
             {
+                // semble buger
                 saveMap(terrain,fichier);
                 window.getWindow().close();
             }
@@ -168,10 +167,10 @@ int main( int argc, char *argv[])
             if ( sf::Mouse::isButtonPressed(sf::Mouse::Left))
             {
                 // si on est sur un case connue du terrain
-                if ( auto shared = terrain.getCase(ijSelection.x,ijSelection.y).lock() )
+                if ( nullptr != terrain.getCase(ijSelection.x,ijSelection.y) )
                 {
                     std::cout << ijSelection.x << "  " << ijSelection.y <<endl;
-                     vectConstruct.emplace_back(terrain.getCase(ijSelection.x,ijSelection.y));
+                    vectConstruct.push_back(Positionnable(terrain.getCase(ijSelection.x,ijSelection.y)));
                 }
 
             }
@@ -185,23 +184,24 @@ int main( int argc, char *argv[])
         }
 
         // affichage de la map
-        for ( auto &sharded_ptr : terrain )
+        for ( Case& caseRef : terrain )
         {
             // affichage des case
-            placePositionableIJ ( sharded_ptr.get()->getI() ,  sharded_ptr.get()->getJ() , polygon,  window.getCote());
+            placePositionableIJ ( caseRef.getI() ,  caseRef.getJ() , polygon,  window.getCote());
             window.draw(polygon,EnumElementsWindow::Jeu);
 
 
-            text.setString(patch::to_string(sharded_ptr.get()->getI())+","+patch::to_string(sharded_ptr.get()->getJ()));
-            placePositionableIJ ( sharded_ptr.get()->getI() ,sharded_ptr.get()->getJ() , text,  window.getCote());
+            text.setString(patch::to_string(caseRef.getI())+","+patch::to_string(caseRef.getJ()));
+            placePositionableIJ ( caseRef.getI() ,caseRef.getJ() , text,  window.getCote());
             window.draw(text,EnumElementsWindow::Jeu);
         }
 
         for (auto &positio : vectConstruct )
         {
-            if ( auto shared = positio.getPosition().lock() )
+            Case* uneCase =  positio.getPosition();
+            if ( nullptr != uneCase )
             {
-                 placePositionableIJ ( shared.get()->getI() , shared.get()->getJ() , polygonBleu,  window.getCote());
+                 placePositionableIJ ( uneCase->getI() , uneCase->getJ() , polygonBleu,  window.getCote());
                 window.draw(polygonBleu,EnumElementsWindow::Jeu);
             }
 

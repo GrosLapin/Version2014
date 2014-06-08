@@ -4,38 +4,50 @@
 
 #include <memory>
 #include <string>
+#include <iostream>
 class Case;
 
 // abs or not ?
-class Positionnable :  public std::enable_shared_from_this<Positionnable>
+class Positionnable
 {
     public :
-        virtual std::weak_ptr<Case> getPosition() const  { return position;};
+        // Le virtual doit etre pour l'heritage en diamant
+        virtual Case* getPosition() const  { return position;};
 
 
-        Positionnable (std::weak_ptr<Case> p_position);
+        Positionnable (Case* p_position);
+        virtual ~Positionnable ();
 
-        /* Pour moi devrait etre constructeur et le destructeur */
         /*virtual void arriveEnJeu (std::weak_ptr<Case> p_position);
         virtual void quitteLeJeu ();*/
 
 
-        virtual void changeCase (std::weak_ptr<Case> nouvelleCase);
+        virtual void changeCase (Case* nouvelleCase);
 
-        std::weak_ptr<Case> getPosition () { return position; };
+        Positionnable& operator=(Positionnable&& other) {
+            position = std::move(other.position);
+            std::cout << "move assigned\n";
+            return *this;
+        }
+
+        Positionnable (Positionnable&& other) {
+            position = std::move(other.position);
+            std::cout << "move constructor \n";
+
+        }
 
 
     protected :
 
         // localisation
-        std::weak_ptr<Case> position;
+        Case*  position;
 
 };
 
 class HashWeakPositionnable
 {
 public :
-    size_t operator()(const std::weak_ptr<Positionnable> &weak_posi) const;
+    size_t operator()(const Positionnable* positionnalbe_ptr) const;
 };
 
 #endif
