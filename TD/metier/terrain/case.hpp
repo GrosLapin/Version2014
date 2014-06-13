@@ -33,7 +33,7 @@ class Case
 
         std::string toString() const;
 
-        // l'égalité se base sur l'égalité des indices
+        // l'Ã©galitÃ© se base sur l'Ã©galitÃ© des indices
         bool operator==(const Case& other) const
         {
             return ( i == other.i ) && (j == other.j ) ;
@@ -52,7 +52,6 @@ class Case
         {
             std::cout << "instert pos_ptr (" << setPositionable.size() << ")" <<std::endl;
             setPositionable.insert(pos_ptr);
-            std::cout << "Done" << std::endl;
         }
         void removePositionnable (Positionnable* pos_ptr)
         {
@@ -60,24 +59,25 @@ class Case
         }
 
 
-        // les assesseurs sur les booléen
-        bool isFranchissable   () const    { return (setPositionable.size() == 0 );}
-        bool getOccupe          () const    { return occupe;};
+        // les assesseurs sur les boolÃ©en
+        bool isFranchissable   () const    { return franchissable;}
+        bool getOccupe          () const    { return (setPositionable.size() != 0 );};
         void setOccupe          (bool boule){ occupe = boule;};
 
-    private :
+   private :
         // la definition meme d'un case
         int i,j;
 
         // on peut pas stocke des pointeurs, ni des indice car les pointeurs volent en cas d'ajout et
-        // les indices sont invalidés en cas de suppression
-        // on doit stocker les coordonnées des voisins et passer par la map : du coup l'interet du tableau
-        // est fortement limité
+        // les indices sont invalidÃ©s en cas de suppression
+        // on doit stocker les coordonnÃ©es des voisins et passer par la map : du coup l'interet du tableau
+        // est fortement limitÃ©
         /// EDIT : now il y a pas de modif de terrain in game so, ok :)
         std::array<Case*,6> voisin;
         bool franchissable;
         bool occupe;
-        std::unordered_set<Positionnable*, HashWeakPositionnable> setPositionable;
+
+        std::set<Positionnable*> setPositionable;
 
 
         /*
@@ -95,7 +95,7 @@ class Case
         void monstrePart    (Monstre* moob);
         std::set<Monstre* > getListMonstre() { return listeMonstre;};
 
-        // la gestion des tours a portée
+        // la gestion des tours a portÃ©e
         void ajoutConstructible      (Constructible* p_tour);
         void suppressionConstructible(Constructible* p_tour);
         std::set<Constructible* >    getListConstructible()    { return listeConstructible;};

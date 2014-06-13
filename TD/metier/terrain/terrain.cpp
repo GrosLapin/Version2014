@@ -31,7 +31,6 @@ void Terrain::placeCase(Case& uneCase)
     std::string ij = uneCase.toString();
 
     // si la case n'esite pas deja : normalement ça devrait pas se produire
-    std::cout << mapCase.size() <<" " ;
     if (!contains(mapCase,ij))
     {
 

@@ -2,7 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <utility>
-#include <string> // pour le to_string... mais ça marche pas merci 4.7.1
+#include <string> // pour le to_string... mais Ã§a marche pas merci 4.7.1
 #include <algorithm>
 
 
@@ -29,7 +29,7 @@ BOOST_GEOMETRY_REGISTER_RING(std::vector<sf::Vector2f>);
 int main( int argc, char *argv[])
 {
 
-    // il a sans doute un truc a faire pour que j'ai pas a calculer de tete le ratio ( la réponse est pas "prend une calc connard" )
+    // il a sans doute un truc a faire pour que j'ai pas a calculer de tete le ratio ( la rÃ©ponse est pas "prend une calc connard" )
     MultyPartViewWindow window (800,600,"it's gonna work, bitch !");
     window.addView(EnumElementsWindow::Jeu  , OriginCoordinate::Center,2);
     window.addView(EnumElementsWindow::Menu , OriginCoordinate::Top,1);
@@ -38,7 +38,7 @@ int main( int argc, char *argv[])
     // le timer global
     sf::Clock timerFix;
 
-    // on récupere le dossier
+    // on rÃ©cupere le dossier
     std::string dossier =  getDossier(argv[0]);
     std::string fichier = "map.map";
 
@@ -50,22 +50,22 @@ int main( int argc, char *argv[])
     text.setCharacterSize(20);
     text.setColor(sf::Color::Red);
 
-    // les indications visuelle : case porté sourie...
+    // les indications visuelle : case portÃ© sourie...
     sf::ConvexShape polygon = createHexagone (window.getCote(), sf::Color(255, 255, 255,245));
     sf::ConvexShape polygonBleu = createHexagone (window.getCote(), sf::Color(0, 0, 255,80));
 
-    Terrain terrain = loadMap(fichier);
+    Terrain terrain = loadMap(dossier+fichier);
 
     // on gere les touches en gerant le zoom
     DeplacementCamera gestionTouches(1,1);
 
-    // les ring pour le calcul d'hover (si il y a pas de redimentionnement ça pourrait rester la mais bon...)
+    // les ring pour le calcul d'hover (si il y a pas de redimentionnement Ã§a pourrait rester la mais bon...)
     auto ringWindow = getRing(window.getWindow()) ;
     auto ringView = getRing(window.getRectangleView(EnumElementsWindow::Jeu)) ;
     sf::Vector2i cursorInWindow = sf::Mouse::getPosition(window.getWindow());
     sf::Vector2f cursorInView = window.getCursorInView(EnumElementsWindow::Jeu,  cursorInWindow);
 
-    /// la gestion des touches sur le coté (pas tres beau c'est juste pour se souvenir qu'on a un menu ici)
+    /// la gestion des touches sur le cotÃ© (pas tres beau c'est juste pour se souvenir qu'on a un menu ici)
     // le fond du menu
     sf::RectangleShape fondView(sf::Vector2f(1,1)) ;
     window.perCentToFix(fondView, EnumElementsWindow::Menu);
@@ -84,7 +84,7 @@ int main( int argc, char *argv[])
 
 
     // temporaire, normalement positionable devrait etre abs
-    vector<Positionnable> vectConstruct;
+    vector<unique_ptr<Positionnable>> vectConstruct;
 
     while (window.getWindow().isOpen())
     {
@@ -95,10 +95,10 @@ int main( int argc, char *argv[])
          ringView = getRing(window.getRectangleView(EnumElementsWindow::Jeu)) ;
 
 
-        /// DANGER !! Il faudrait reflechier ou restart le timer et ce que ça implique
+        /// DANGER !! Il faudrait reflechier ou restart le timer et ce que Ã§a implique
         timerFix.restart();
 
-        // récupération de la position de la souris dans la fenêtre
+        // rÃ©cupÃ©ration de la position de la souris dans la fenÃªtre
          cursorInWindow = sf::Mouse::getPosition(window.getWindow());
          cursorInView = window.getCursorInView(EnumElementsWindow::Jeu,  cursorInWindow);
 
@@ -164,23 +164,26 @@ int main( int argc, char *argv[])
                    cout << "bouton2";
                 }
             }
-            if ( sf::Mouse::isButtonPressed(sf::Mouse::Left))
+            if (event.type == sf::Event::MouseButtonPressed)
             {
-                // si on est sur un case connue du terrain
-                if ( nullptr != terrain.getCase(ijSelection.x,ijSelection.y) )
+                if (event.mouseButton.button == sf::Mouse::Right)
                 {
-                    std::cout << ijSelection.x << "  " << ijSelection.y <<endl;
-                    vectConstruct.push_back(Positionnable(terrain.getCase(ijSelection.x,ijSelection.y)));
+                    // si on est sur un case connue du terrain
+                    if ( nullptr != terrain.getCase(ijSelection.x,ijSelection.y) )
+                    {
+                        std::cout << terrain.getCase(ijSelection.x,ijSelection.y) <<endl;
+                        vectConstruct.push_back(unique_ptr<Positionnable>(new Positionnable(terrain.getCase(ijSelection.x,ijSelection.y))));
+                        std::cout << "__" <<  vectConstruct.size() << "__";
+                    }
                 }
+            }
 
-            }
-            else if ( sf::Mouse::isButtonPressed(sf::Mouse::Right))
-            {
-                /* il faut qqch pour savoir qui est ou, du coup p*e plus une map qu'un vector
-                auto it = std::find_if(vectConstruct.begin(),vectConstruct.end(),[] (auto laFleme) terrain.getCase(ijSelection.x,ijSelection.y));
-                vectConstruct.erase(it);
-                */
-            }
+
+        }
+        if ( sf::Mouse::isButtonPressed(sf::Mouse::Left))
+        {
+            if ( vectConstruct.size() > 0)
+                vectConstruct.erase(vectConstruct.begin());
         }
 
         // affichage de la map
@@ -198,13 +201,19 @@ int main( int argc, char *argv[])
 
         for (auto &positio : vectConstruct )
         {
-            Case* uneCase =  positio.getPosition();
+            Case* uneCase =  positio->getPosition();
             if ( nullptr != uneCase )
             {
                  placePositionableIJ ( uneCase->getI() , uneCase->getJ() , polygonBleu,  window.getCote());
                 window.draw(polygonBleu,EnumElementsWindow::Jeu);
             }
 
+        }
+        int cpt = 0;
+        for (Case& uneCase : terrain )
+        {
+            if ( uneCase.getOccupe() )
+                cpt++;
         }
 
         // placePositionableIJ ( ijSelection.x ,ijSelection.y, *PolygonRose, cote, offSetX,  offSetY);

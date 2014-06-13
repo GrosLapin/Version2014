@@ -7,9 +7,9 @@ Terrain loadMap(std::string p_fichier)
 
     std::ifstream fichier(p_fichier.c_str(), std::ios::in );  // on ouvre en lecture
     std::vector<std::pair<int,int>> temp;
-    if(fichier)  // si l'ouverture a fonctionné
+    if(fichier)  // si l'ouverture a fonctionnÃ©
     {
-        std::string line;  // déclaration d'une chaîne qui contiendra la ligne lue
+        std::string line;  // dÃ©claration d'une chaÃ®ne qui contiendra la ligne lue
 
         while(getline(fichier, line))  // tant que l'on peut mettre la ligne dans "contenu"
         {
@@ -24,19 +24,16 @@ Terrain loadMap(std::string p_fichier)
         fichier.close();
     }
 
-    std::cout << temp.size() << std::endl;
+    std::cout << temp.size() <<"_"<< std::endl;
 
     return Terrain(temp);
 }
 
-
-/// bug sans raison
+/// bug ?
 bool saveMap(Terrain &terrain, std::string p_fichier)
 {
-
-    std::cout << "oui oui oiuoui ";
-    std::ofstream fichier(p_fichier.c_str(),  std::ios_base::trunc );  //déclaration du flux et ouverture du fichier
-    if(fichier)  // si l'ouverture a réussi
+    std::ofstream fichier(p_fichier.c_str(),  std::ios_base::trunc );  //dÃ©claration du flux et ouverture du fichier
+    if(fichier)  // si l'ouverture a rÃ©ussi
     {
 
         for ( Case& caseRef : terrain  )

@@ -7,8 +7,8 @@
 
 class Case;
 
-// l'idée pour pas etre emmerder c'est de faire un terrain qui est pas modifiable
-// comme ça je passe des * et des ref valide est c'est cool
+// l'idÃ©e pour pas etre emmerder c'est de faire un terrain qui est pas modifiable
+// comme Ã§a je passe des * et des ref valide est c'est cool
 // de toute facon il a pas vocation a bouger en jeu.
 /// LE TERRAIN DE TD et de MAP_EDITOR ne sont pas les memes !!!
 class Terrain
@@ -18,15 +18,13 @@ class Terrain
         Terrain (ConteneurDePaireDeInt conteneur)
         {
             decltype(conteneur.begin()) it = conteneur.begin();
-            int i =0 ;
+
             for ( ; it != conteneur.end() ; it++ )
             {
-                // pour la lisibilité et que le compilateur guelle si les types sont mauvais
+                // pour la lisibilitÃ© et que le compilateur guelle si les types sont mauvais
                 int i = (*it).first;
                 int j = (*it).second;
                 listCase.push_back(Case(i,j));
-                i++;
-                std::cout << i << std::endl;
             }
 
             // maintenant que le vecteur est charger on fait le lien avec la map sans risque
@@ -39,7 +37,7 @@ class Terrain
 
         Case* getCase(int i, int j) ;
 
-        // les itérators afin d'utiliser les for(:) de c++ 11
+        // les itÃ©rators afin d'utiliser les for(:) de c++ 11
         typedef std::vector<Case>::iterator iterator;
         typedef std::vector<Case>::const_iterator const_iterator;
 
@@ -56,7 +54,7 @@ class Terrain
     private :
         void placeCase(Case& uneCase);
         std::vector<Case> listCase;
-        std::map< std::string , Case* > mapCase; //je suis pas sur que ça soit le meuiller moyen de representer la mémoir map <int map <int case *>
+        std::map< std::string , Case* > mapCase; //je suis pas sur que Ã§a soit le meuiller moyen de representer la mÃ©moir map <int map <int case *>
 
 
 };

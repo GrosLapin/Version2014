@@ -23,18 +23,27 @@ class Positionnable
 
 
         virtual void changeCase (Case* nouvelleCase);
+        Positionnable& operator=(Positionnable&& other) = delete;
+        Positionnable (Positionnable&& other) = delete;
+        Positionnable& operator=(const Positionnable& other) = delete;
+        Positionnable (const Positionnable& other) = delete;
 
+/*
+Le comportement est FAUX, il faudrait metre a joure également le fait que la case ne doit plus garder la
+position actuelle mais la nouvelle
         Positionnable& operator=(Positionnable&& other) {
             position = std::move(other.position);
-            std::cout << "move assigned\n";
             return *this;
         }
 
         Positionnable (Positionnable&& other) {
             position = std::move(other.position);
-            std::cout << "move constructor \n";
 
         }
+
+*/
+
+        std::string sayHi () { return "hi";};
 
 
     protected :
@@ -43,11 +52,11 @@ class Positionnable
         Case*  position;
 
 };
-
+/*
 class HashWeakPositionnable
 {
 public :
     size_t operator()(const Positionnable* positionnalbe_ptr) const;
-};
+};*/
 
 #endif
