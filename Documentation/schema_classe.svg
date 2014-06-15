@@ -14,7 +14,7 @@
    height="1052.3622047"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.3.1 r9886"
+   inkscape:version="0.48.4 r9939"
    sodipodi:docname="schema_classe.svg"
    inkscape:export-filename="C:\Users\Martin\Desktop\UML_28052013.png"
    inkscape:export-xdpi="90"
@@ -3014,16 +3014,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.35355339"
-     inkscape:cx="-365.49216"
-     inkscape:cy="708.38206"
+     inkscape:zoom="0.125"
+     inkscape:cx="1049.2886"
+     inkscape:cy="825.81085"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1871"
-     inkscape:window-height="1056"
-     inkscape:window-x="49"
-     inkscape:window-y="24"
+     inkscape:window-width="1776"
+     inkscape:window-height="948"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
      inkscape:window-maximized="1" />
   <metadata
      id="metadata7">
@@ -6569,7 +6569,7 @@
        inkscape:connection-end-point="d4" />
     <g
        id="g5793-4"
-       transform="translate(-1846.0008,-801.2608)"
+       transform="translate(-3598.0008,2230.7392)"
        inkscape:export-filename="/users/iasi/morterol/Bureau/gitHub/Documentation/ShemaDeClasse/Shema.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90">
@@ -6704,23 +6704,23 @@
        id="rect4475"
        width="2028"
        height="1332"
-       x="-3901.8806"
-       y="2224.5811" />
+       x="-5653.8809"
+       y="5256.5811" />
     <path
        style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m -3905.8805,2292.5809 2024,0 4,0"
+       d="m -5657.8805,5324.5809 2024,0 4,0"
        id="path5581"
        inkscape:connector-curvature="0" />
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Segoe Script;-inkscape-font-specification:Segoe Script"
-       x="-3109.8806"
-       y="2268.5811"
+       x="-4925.8809"
+       y="5548.5811"
        id="text5583"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
-         x="-3109.8806"
-         y="2268.5811"
+         x="-4925.8809"
+         y="5548.5811"
          id="tspan5587">Meta_SelecteurCible</tspan></text>
     <g
        id="g10482-5-1"
@@ -7061,7 +7061,7 @@
            id="flowPara4224-4-8-4">GestionnairePorté</flowPara></flowRoot>    </g>
     <path
        style="fill:none;stroke:#000000;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:url(#DiamondL);display:inline"
-       d="M -908.18971,292.92874 -1256.9155,-102.14737"
+       d="M -877.64339,292.92874 -1195.9857,-102.14737"
        id="path11151-6-4"
        inkscape:connector-type="polyline"
        inkscape:connector-curvature="0"
@@ -7128,7 +7128,7 @@
     </g>
     <path
        style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;display:inline"
-       d="m -1861.105,-455.41186 27.3357,10.76604"
+       d="m -1861.105,-470.3484 40.1162,14.69331"
        id="path5960"
        inkscape:connector-type="polyline"
        inkscape:connector-curvature="0"

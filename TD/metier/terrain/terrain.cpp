@@ -57,6 +57,9 @@ void Terrain::placeCase(Case& uneCase)
                 }
             }
         }
+
+        /// je suis pas sur que ça soit tres beau, mais j'ai besoin de la map dans le foncteur de range
+        uneCase.setTerrain(this);
     }
     else
     {

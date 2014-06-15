@@ -4,24 +4,9 @@
 using namespace std;
 Positionnable::Positionnable (Case* p_position) : position(p_position)
 {
-    if ( nullptr != position )
-    {
-        position->addPositionnable(this);
-    }
+
 }
 
-/// _______________________________________________
-/// _____j'ai declarer un destructor du____________
-/// _________coup je devrais pas pouvoir___________
-/// ____________faire de copie_____________________
-/// _______________________________________________
-Positionnable::~Positionnable ()
-{
-    if ( nullptr != position )
-    {
-        position->removePositionnable(this);
-    }
-}
 
 /// Permet de changer de case (gere le cas null avant ou null apres)
 void Positionnable::changeCase (Case* nouvelleCase)
@@ -30,7 +15,7 @@ void Positionnable::changeCase (Case* nouvelleCase)
     // 1) Il faut faire savoir à la case que le positionnable s'en va:
     if ( nullptr != position )
     {
-        position->removePositionnable(this);
+        quitteCase(position);
     }
 
     // 2) on change de case
@@ -39,7 +24,7 @@ void Positionnable::changeCase (Case* nouvelleCase)
     // 3) on fait savoir à la nouvelle case qu'il y a un nouveau positionable
     if ( nullptr != position )
     {
-        position->addPositionnable(this);
+        arriveCase(position);
     }
 
 }

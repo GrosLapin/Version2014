@@ -16,13 +16,16 @@ class Positionnable
 
 
         Positionnable (Case* p_position);
-        virtual ~Positionnable ();
+        //virtual ~Positionnable () {}
 
         /*virtual void arriveEnJeu (std::weak_ptr<Case> p_position);
         virtual void quitteLeJeu ();*/
 
 
-        virtual void changeCase (Case* nouvelleCase);
+        // un peu de nvi (parce que j'aime ça
+        void changeCase (Case* nouvelleCase);
+        virtual void quitteCase(Case *) = 0 ; // a specifier au niveau de la tour et du monstre
+        virtual void arriveCase(Case *) = 0 ;
         Positionnable& operator=(Positionnable&& other) = delete;
         Positionnable (Positionnable&& other) = delete;
         Positionnable& operator=(const Positionnable& other) = delete;
@@ -43,7 +46,6 @@ position actuelle mais la nouvelle
 
 */
 
-        std::string sayHi () { return "hi";};
 
 
     protected :

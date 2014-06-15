@@ -13,19 +13,6 @@ enum Direction
     FinDirection = SudEst
 };
 
-enum TypeDePorte
-{
-    Disque = 0,
-    Etoile =1,
-    LigneO_E =2,
-    LigneSO_NE =3,
-    LigneSE_NO =4,
-    CerclePaire =5,
-    CercleImpaire =6,
-    DebutPorte = Disque,
-    FinPorte = CercleImpaire
-};
-
 Direction directionOppose (const Direction &p_dir);
 void IJvoisin (const Direction&  p_dir, int& i, int& j);
 

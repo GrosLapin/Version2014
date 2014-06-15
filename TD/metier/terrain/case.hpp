@@ -18,7 +18,8 @@
 #include "enumTerrain.hpp"
 #include "../elementsJeu/positionnable.hpp"
 #include "../../tools/structAndOperator.hpp"
-// il va faloir gerer les voisin comme des weak-ptr
+class Cible;
+class Terrain;
 class Case
 {
 
@@ -48,21 +49,20 @@ class Case
         void removeVoisin(const Direction& direction);
 
 
-        void addPositionnable (Positionnable* pos_ptr)
-        {
-            std::cout << "instert pos_ptr (" << setPositionable.size() << ")" <<std::endl;
-            setPositionable.insert(pos_ptr);
-        }
-        void removePositionnable (Positionnable* pos_ptr)
-        {
-            setPositionable.erase(setPositionable.find(pos_ptr));
-        }
 
+
+        void addCible (Cible* pos_ptr);
+        void removeCible (Cible* pos_ptr);
+        std::set<Cible*> getCible() {return setCible;}
 
         // les assesseurs sur les booléen
         bool isFranchissable   () const    { return franchissable;}
-        bool getOccupe          () const    { return (setPositionable.size() != 0 );};
+        bool getOccupe          () const    { return (setCible.size() != 0 );};
         void setOccupe          (bool boule){ occupe = boule;};
+
+        /// a voir si on peut pas faire mieux;
+        void setTerrain (Terrain* t) { terrain = t;}
+        Terrain* getTerrain () { return terrain;}
 
    private :
         // la definition meme d'un case
@@ -77,8 +77,9 @@ class Case
         bool franchissable;
         bool occupe;
 
-        std::set<Positionnable*> setPositionable;
+        std::set<Cible*> setCible;
 
+        Terrain* terrain;
 
         /*
         // utile pour les sort de zone ( si si )

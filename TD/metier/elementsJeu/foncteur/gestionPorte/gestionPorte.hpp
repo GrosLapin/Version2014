@@ -3,11 +3,18 @@
 
 #include <vector>
 #include <algorithm>
-#include "../../porte.hpp"
+#include <SFML/System/Vector2.hpp>
+#include "../../porte/porte.hpp"
 
 class Cible;
+class Case;
 
 // classe abstraite definissant le comportement de la gestion de porté generique
+/// DANGER : ON NE FAIT PAS DE DIFF TOUR / MOOB pour l'instant IL FAUDRA Y REVENIR
+
+/// NOTE : le liens terrain case est moche mais il nous sert ici
+
+/// NOTE : si probleme de perf, mettre des unodored_set au lieux de certain vector
 class GestionPorte
 {
     public :
@@ -16,45 +23,28 @@ class GestionPorte
 
 
         // parce que j'aiiime les foncteurs
+        // la case nous donne aussi le terrain, et ça c'est cool
+
         virtual std::vector<Cible*> operator() (Case* positionAttaquant);
 
-        // il faut un moyen d'ajouter une zone de tire
-        /// ATTENTION : Il faut récuperer ce que j'ai deja fait sur les porté de "TD2013"
-        virtual void addPorte(int forme, int range)
-        {
-            portePositive.push_back(Porte(forme,range));
-            // La gestion de la porté max est typiquement un truc que je ferais bien en NVI
-        }
-        virtual void removePorte(int forme, int range)
-        {
-            portePositive.erase(
-             std::find_if(portePositive.begin(),portePositive.end(),[&](Porte& unePorte)
-                          { return unePorte.getRange() == range && unePorte.getForme == forme; }
-                )
-            );
-            // La gestion de la porté max est typiquement un truc que je ferais bien en NVI
-        }
+        // il faut un moyen d'ajouter / enlever une zone de tire
+        virtual void addPorte(TypeDePorte forme, int range);
+        virtual void removePorte(TypeDePorte forme, int range);
 
-        /// Question : comment sont stoquer les porté ?
-            // - peut on faire de la "soustraction de porté" ?
-            // - peut on juste retire une porte qui a deja était mise
-        virtual void addZoneOmbre(int forme, int range)
-        {
-            porteNegative.push_back(Porte(forme,range));
-        }
-        virtual void removeZoneOmbre(int forme, int range)
-        {
-            porteNegative.erase(
-             std::find_if(portePositive.begin(),portePositive.end(),[&](Porte& unePorte)
-                          { return unePorte.getRange() == range && unePorte.getForme == forme; }
-                )
-            );
-            // La gestion de la porté max est typiquement un truc que je ferais bien en NVI
-        }
+        // les zones d'ombre, pour faire des soustractions de forme
+        virtual void addZoneOmbre(TypeDePorte forme, int range);
+        virtual void removeZoneOmbre(TypeDePorte forme, int range);
+
         // pour la reduction de porté eventuelle
-        int getPorteMax();
+        // int getPorteMax(); // a voir plus tard
+
+
 
     protected :
+        void majAllZone();
+        void majZoneReele();
+        virtual void changeCase(Case*);
+
         Case* dernierePosition; // sert pour eviter de tout recalculer si on a pas changer de place
                                 // et comme la majorité des attaquant avec une gestion de porté seront
                                 // des tours ça devrait etre utile
@@ -63,15 +53,18 @@ class GestionPorte
     /// implementation pour l'instant :
     // à deux liste :
         // porté positive, qui viennent de addPorte
-        std::vector<Porte> portePositive;
+        std::vector<Portee> portePositive;
         // porte negative, qui viennent de removePorte
-        std::vector<Porte> porteNegative;
+        std::vector<Portee> porteNegative;
+
     // une zone virtuelle qui stoque les case si l'attaquant est poseé en 0.0 avec un terrain plein
     // il est recalculé uniquement si on touche aux porté positive ou negative
+        std::vector<sf::Vector2<int>> zoneVirtuelle;
 
     // un conteneur qui stoque les "case a porté reel" c'est a dire l'application des case de la porte
     // sur la position.
     // il est recalculé avec la porté virtuelle si celle si est modifié ou si l'attaquant bouge
+        std::vector<Case*> zoneReele;
 };
 
 #endif

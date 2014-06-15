@@ -1,5 +1,6 @@
 #include "case.hpp"
 #include <iostream>
+#include "../elementsJeu/cible.hpp"
 
 using namespace std;
 Case::Case(int p_i, int p_j) :
@@ -8,7 +9,8 @@ Case::Case(int p_i, int p_j) :
     voisin ({{nullptr,nullptr,nullptr,nullptr,nullptr,nullptr}}),
     franchissable (true),
     occupe (false),
-    setPositionable ()
+    setCible (),
+    terrain(nullptr)
 {
     // pour la double ({{ }}) => bug Gcc qui respecte pas le stendard
     // http://stackoverflow.com/questions/8192185/using-stdarray-with-initialization-lists
@@ -83,6 +85,19 @@ void Case::addVoisin(const Direction& direction, Case*  p_voisin)
         p_voisin->addVoisin(directionOppose(direction),this);
     }
 }
+
+ void Case::addCible (Cible* pos_ptr)
+{
+    std::cout << "instert pos_ptr (" << setCible.size() << ")" <<std::endl;
+    setCible.insert(pos_ptr);
+}
+
+void Case::removeCible (Cible* pos_ptr)
+{
+    setCible.erase(setCible.find(pos_ptr));
+}
+
+
 
 
 /*

@@ -13,6 +13,7 @@
 #include "metier/terrain/case.hpp"
 #include "metier/elementsJeu/positionnable.hpp"
 #include "tools/utilitaire.hpp"
+#include "metier/elementsJeu/cible.hpp"
 using namespace std;
 
 #include <boost/geometry.hpp>
@@ -84,7 +85,7 @@ int main( int argc, char *argv[])
 
 
     // temporaire, normalement positionable devrait etre abs
-    vector<unique_ptr<Positionnable>> vectConstruct;
+    vector<unique_ptr<Cible>> vectConstruct;
 
     while (window.getWindow().isOpen())
     {
@@ -172,7 +173,7 @@ int main( int argc, char *argv[])
                     if ( nullptr != terrain.getCase(ijSelection.x,ijSelection.y) )
                     {
                         std::cout << terrain.getCase(ijSelection.x,ijSelection.y) <<endl;
-                        vectConstruct.push_back(unique_ptr<Positionnable>(new Positionnable(terrain.getCase(ijSelection.x,ijSelection.y))));
+                        vectConstruct.push_back(unique_ptr<Cible>(new Cible(terrain.getCase(ijSelection.x,ijSelection.y),100)));
                         std::cout << "__" <<  vectConstruct.size() << "__";
                     }
                 }
